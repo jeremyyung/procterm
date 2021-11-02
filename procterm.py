@@ -41,7 +41,7 @@ def main():
 def splitMon(line):
     PID = re.search('^.?\d+',line).group().strip()
     status = re.search(' \w ', line).group().strip()
-    hours = re.search(' \d+(?=:)', line).group().strip()
+    hours = int(re.search(' \d+(?=:)', line).group().strip())
     return(PID,status,hours)
 
 def runMonShow(p4prefix):
