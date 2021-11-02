@@ -13,9 +13,9 @@ def main():
     'p4 monitor kill' to mark it for termination."""
     p = argparse.ArgumentParser(description="Marks long running processes for termination.")
     p.add_argument('--p4bin',dest='p4bin', default='/opt/icmanage/bin/p4',help='Filepath to P4 binary.')
-    p.add_argument('-h', dest='hourlim', default=240, help='Max number of hours a process can run before being marked for termination.',
+    p.add_argument('-l', dest='hourlim', default=240, help='Max number of hours a process can run before being marked for termination.',
                    type=int)
-    #p.add_argument('-p', dest='p4port', required=True, help='P4PORT for main server.')
+    p.add_argument('-p', dest='p4port', required=True, help='P4PORT for main server.')
     p.add_argument('-m', dest='emails', default="jeremy.yung@icmanage.com",
                    help='Email recipient list.(a@email.com,b@email.com)')
     p.add_argument('--debug', dest='debug', default=False, action='store_true', help='Turn on debug output.')
@@ -23,11 +23,17 @@ def main():
 
     if args.debug:
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-    p4_cmd_prefix = "%s -p %s -u icmAdmin" % (args.p4bin,args.p4port)
+    p4_cmd_prefix = "%s -p %s -u jeremy" % (args.p4bin,args.p4port)
 
-    temp = "2282 I icmAdmin   115:05:54 IDLE"
-    print(temp.split(' '))
-    print(int((temp.split(' ')[5]).split(':')[0]))
+    stdout,stderr,errorcode = runMonShow(p4_cmd_prefix)
+
+    if errorcode > 0:
+        logging.error("P4 Error: \n %s" % stderr)
+    else:
+        allprocs = stdout.split('\n')
+        for proc in allprocs:
+            print(splitMon(proc))
+    exit(0)
 
 def splitMon(line):
     splitline = line.split(' ')
