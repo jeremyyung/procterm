@@ -4,7 +4,7 @@ import subprocess
 import re
 from email.mime.text import MIMEText
 import socket
-import os,pwd
+import os,pwd,traceback
 haserror = False
 
 def main():
@@ -51,8 +51,14 @@ def main():
     exit(0)
 
 def splitMon(procstr):
-    PID = re.search('^.?\d+',procstr).group().strip()
-    hours = int(re.search(' \d+(?=:)', procstr).group().strip())
+    try:
+        procstr = procstr.strip() #Get rid of leading blanks
+        PID = re.search('^.?\d+',procstr).group().strip()
+        hours = int(re.search(' \d+(?=:)', procstr).group().strip())
+    except Exception as e:
+        logging.error("Regex search failed: %s" % procstr)
+        traceback.print_exc()
+        exit(1)
     return(PID,hours,procstr)
 
 def runMonShow(p4prefix):
