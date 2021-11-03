@@ -23,7 +23,6 @@ def main():
                    help='Do a dryrun without terminating processes.')
     args = p.parse_args()
 
-    #splitMon(" 2282 I icmAdmin   95:04:52 IDLE ")
     if args.debug:
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
     p4_cmd_prefix = "%s -p %s -u %s" % (args.p4bin,args.p4port,args.p4user)
@@ -53,7 +52,6 @@ def main():
 
 def splitMon(procstr):
     PID = re.search('^.?\d+',procstr).group().strip()
-    #status = re.search(' \w ', line).group().strip()
     hours = int(re.search(' \d+(?=:)', procstr).group().strip())
     return(PID,hours,procstr)
 
